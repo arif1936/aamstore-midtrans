@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AAMstore - Belanja Mudah, Aman, Cepat</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Midtrans Snap.js -->
+  <script type="text/javascript"
+    src="https://app.midtrans.com/snap/snap.js"
+    data-client-key="GANTI_DENGAN_CLIENT_KEY_KAMU">
+  </script>
+</head>
+<body>
+  <header>
+    <div class="logo">AAMstore</div>
+    <nav><a href="#produk">Produk</a></nav>
+  </header>
+
+  <section class="hero">
+    <h1>Belanja Mudah, Aman, Cepat</h1>
+    <p>Temukan produk terbaik hanya di AAMstore</p>
+    <a href="#produk" class="cta-btn">Lihat Produk</a>
+  </section>
+
+  <section id="produk" class="products">
+    <div class="card">
+      <h2>Basic</h2>
+      <p class="price">Rp10.000</p>
+      <button onclick="payNow(10000, 'Basic')">Bayar Sekarang</button>
+    </div>
+    <div class="card">
+      <h2>Premium</h2>
+      <p class="price">Rp25.000</p>
+      <button onclick="payNow(25000, 'Premium')">Bayar Sekarang</button>
+    </div>
+    <div class="card">
+      <h2>Pro</h2>
+      <p class="price">Rp50.000</p>
+      <button onclick="payNow(50000, 'Pro')">Bayar Sekarang</button>
+    </div>
+  </section>
+
+  <script>
+    function payNow(amount, productName) {
+      fetch('/api/create-transaction', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ amount: amount, productName: productName })
+      })
+      .then(res => res.json())
+      .then(data => {
+        window.snap.pay(data.token, {
+          onSuccess: function(result){ alert('Pembayaran sukses!'); console.log(result); },
+          onPending: function(result){ alert('Menunggu pembayaran'); console.log(result); },
+          onError: function(result){ alert('Pembayaran gagal'); console.log(result); }
+        });
+      });
+    }
+  </script>
+</body>
+</html>
