@@ -3,61 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AAMstore - Belanja Mudah, Aman, Cepat</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Midtrans Snap.js -->
-  <script type="text/javascript"
-    src="https://app.midtrans.com/snap/snap.js"
-    data-client-key="GANTI_DENGAN_CLIENT_KEY_KAMU">
-  </script>
+  <title>AAMstore - Pembayaran Midtrans</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f7f7; margin: 0; padding: 0; }
+    header { text-align: center; padding: 30px; background: #4a90e2; color: white; }
+    header h1 { margin: 0; font-size: 2rem; }
+    .container { max-width: 600px; margin: 40px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; }
+    .price { font-size: 1.5rem; margin: 10px 0; color: #333; }
+    .btn-pay { display: inline-block; background: #4a90e2; color: white; padding: 12px 24px; font-size: 1rem; border-radius: 6px; text-decoration: none; border: none; cursor: pointer; }
+    .btn-pay:hover { background: #357ABD; }
+  </style>
 </head>
 <body>
   <header>
-    <div class="logo">AAMstore</div>
-    <nav><a href="#produk">Produk</a></nav>
+    <h1>AAMstore</h1>
+    <p>Toko Online Aman & Cepat</p>
   </header>
+  <div class="container">
+    <h2>Produk Premium</h2>
+    <p class="price">Rp 10.000</p>
+    <button class="btn-pay" id="pay-button">Bayar Sekarang</button>
+  </div>
 
-  <section class="hero">
-    <h1>Belanja Mudah, Aman, Cepat</h1>
-    <p>Temukan produk terbaik hanya di AAMstore</p>
-    <a href="#produk" class="cta-btn">Lihat Produk</a>
-  </section>
-
-  <section id="produk" class="products">
-    <div class="card">
-      <h2>Basic</h2>
-      <p class="price">Rp10.000</p>
-      <button onclick="payNow(10000, 'Basic')">Bayar Sekarang</button>
-    </div>
-    <div class="card">
-      <h2>Premium</h2>
-      <p class="price">Rp25.000</p>
-      <button onclick="payNow(25000, 'Premium')">Bayar Sekarang</button>
-    </div>
-    <div class="card">
-      <h2>Pro</h2>
-      <p class="price">Rp50.000</p>
-      <button onclick="payNow(50000, 'Pro')">Bayar Sekarang</button>
-    </div>
-  </section>
-
+  <!-- Script Midtrans Snap -->
+  <script 
+    type="text/javascript"
+    src="https://app.midtrans.com/snap/snap.js"
+    data-client-key="">
+  </script>
   <script>
-    function payNow(amount, productName) {
-      fetch('/api/create-transaction', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ amount: amount, productName: productName })
-      })
-      .then(res => res.json())
+    document.getElementById('pay-button').addEventListener('click', function () {
+      fetch('/api/create-transaction', { method: 'POST' })
+      .then(response => response.json())
       .then(data => {
-        window.snap.pay(data.token, {
-          onSuccess: function(result){ alert('Pembayaran sukses!'); console.log(result); },
-          onPending: function(result){ alert('Menunggu pembayaran'); console.log(result); },
-          onError: function(result){ alert('Pembayaran gagal'); console.log(result); }
-        });
-      });
-    }
+        snap.pay(data.token);
+      })
+      .catch(error => console.error(error));
+    });
   </script>
 </body>
 </html>

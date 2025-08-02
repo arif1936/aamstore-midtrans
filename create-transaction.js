@@ -1,43 +1,31 @@
-import midtransClient from 'midtrans-client';
+import midtransClient from "midtrans-client";
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const { amount, productName } = req.body;
+  const serverKey = process.env.MIDTRANS_SERVER_KEY;
 
-  if (!amount || !productName) {
-    return res.status(400).json({ message: 'Invalid request data' });
-  }
-
-  const snap = new midtransClient.Snap({
+  let snap = new midtransClient.Snap({
     isProduction: true,
-    serverKey: process.env.MIDTRANS_SERVER_KEY,
+    serverKey: serverKey,
   });
 
-  try {
-    const parameter = {
-      transaction_details: {
-        order_id: `order-${Date.now()}`,
-        gross_amount: amount,
-      },
-      item_details: [
-        {
-          id: 'item1',
-          price: amount,
-          quantity: 1,
-          name: productName,
-        },
-      ],
-      credit_card: {
-        secure: true,
-      },
-    };
+  let parameter = {
+    transaction_details: {
+      order_id: "order-id-" + Math.round(Math.random() * 100000),
+      gross_amount: 10000,
+    },
+    credit_card: {
+      secure: true,
+    },
+  };
 
+  try {
     const transaction = await snap.createTransaction(parameter);
-    return res.status(200).json({ token: transaction.token });
+    res.status(200).json({ token: transaction.token });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 }

@@ -1,6 +1,9 @@
 {
   "name": "aamstore-midtrans",
   "version": "1.0.0",
+  "scripts": {
+    "start": "vercel dev"
+  },
   "dependencies": {
     "midtrans-client": "^1.3.1"
   }
